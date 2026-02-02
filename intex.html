@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine ❤️</title>
+
+<style>
+body{
+    margin:0;
+    text-align:center;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#ff0000,#ffffff);
+    overflow:hidden;
+    color:#b30000;
+}
+
+h1{font-size:30px;}
+
+button{
+    padding:14px 34px;
+    font-size:18px;
+    border-radius:30px;
+    border:none;
+    margin:10px;
+    background:#ff0000;
+    color:white;
+    cursor:pointer;
+}
+
+input{
+    padding:14px;
+    font-size:18px;
+    border-radius:25px;
+    border:2px solid #ff0000;
+    text-align:center;
+}
+
+#noBtn{
+    position:absolute;
+    background:white;
+    color:#ff0000;
+    border:2px solid #ff0000;
+}
+
+#nameBox,#valentineBox,#questionBox,#final{
+    display:none;
+}
+
+img{
+    width:260px;
+    border-radius:20px;
+    margin-top:15px;
+}
+
+/* hearts */
+.heart{
+    position:fixed;
+    top:-10px;
+    font-size:22px;
+    animation:fall linear infinite;
+}
+@keyframes fall{
+    to{transform:translateY(110vh);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ONLINE TENSION BGM -->
+<audio id="bgm" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3">
+</audio>
+
+<!-- FINAL DIALOGUE -->
+<audio id="dialogue">
+    <source src="dialogue.mp4" type="audio/mpeg">
+</audio>
+
+<!-- NAME INPUT -->
+<div id="nameBox">
+    <h1>❤️ What's your name? 🤍</h1>
+    <input id="nameInput" placeholder="Type your name"><br><br>
+    <button onclick="saveName()">OK</button>
+</div>
+
+<!-- VALENTINE -->
+<div id="valentineBox">
+    <h1>❤️ Will you be my Valentine? 🤍</h1>
+    <button id="yesBtn" onclick="start()">Yes ❤️</button>
+    <button id="noBtn" onmouseover="moveNo()" ontouchstart="moveNo()">No 🤍</button>
+</div>
+
+<!-- QUESTIONS -->
+<div id="questionBox">
+    <h1 id="question"></h1>
+    <button id="opt1" onclick="nextQuestion()"></button>
+    <button id="opt2" onclick="nextQuestion()"></button>
+</div>
+
+<!-- FINAL -->
+<div id="final">
+    <h1 id="finalText"></h1>
+    <img src="love.gif">
+</div>
+
+<script>
+const bgm = document.getElementById("bgm");
+const dialogue = document.getElementById("dialogue");
+
+let herName="";
+const myName="Ameen";
+let noCount = 0;
+
+/* show name page */
+nameBox.style.display="block";
+
+function saveName(){
+    herName = nameInput.value.trim() || "Someone Special ❤️";
+    nameBox.style.display="none";
+    valentineBox.style.display="block";
+
+    bgm.currentTime = 0;
+    bgm.play();
+}
+
+/* YES */
+function start(){
+    bgm.pause();
+    bgm.currentTime = 0;
+
+    valentineBox.style.display="none";
+    questionBox.style.display="block";
+    loadQuestion();
+}
+
+/* NO logic: 4th time → Yes/Yes */
+function moveNo(){
+    noCount++;
+
+    if(noCount >= 4){
+        noBtn.style.display = "none";
+
+        const yesClone = yesBtn.cloneNode(true);
+        yesClone.innerText = "Yes ❤️";
+        yesClone.onclick = start;
+        valentineBox.appendChild(yesClone);
+        return;
+    }
+
+    noBtn.style.left = Math.random()*(window.innerWidth-120)+"px";
+    noBtn.style.top  = Math.random()*(window.innerHeight-120)+"px";
+}
+
+/* QUESTIONS (ENGLISH UPDATED) */
+const questions=[
+    { q:"Are you committed?", o:["No","Of course not"] },
+    { q:"Who do you like the most in this world?", o:[myName,myName] },
+    { q:"Will you be my Valentine?", o:["Yes","Of course"] }
+];
+
+let i=0;
+
+function loadQuestion(){
+    question.innerText = questions[i].q;
+    opt1.innerText = questions[i].o[0];
+    opt2.innerText = questions[i].o[1];
+}
+
+function nextQuestion(){
+    i++;
+    if(i < questions.length){
+        loadQuestion();
+    }else{
+        questionBox.style.display="none";
+        final.style.display="block";
+
+        finalText.innerText = herName+" loves "+myName+" ❤️🤍";
+        dialogue.currentTime = 0;
+        dialogue.play();
+    }
+}
+
+/* hearts */
+setInterval(()=>{
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerText=Math.random()>0.5?"❤️":"🤍";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDuration=(2+Math.random()*3)+"s";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),5000);
+},300);
+</script>
+
+</body>
+</html>
